@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal de Verificación Turística - Universidad ECCI</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .gauge-transition { transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between">
+
+    <!-- Header Principal -->
+    <header class="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white shadow-lg border-b border-blue-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="p-3 bg-blue-600/30 rounded-xl border border-blue-400/30 backdrop-blur-sm">
+                        <i data-lucide="shield-check" class="w-8 h-8 text-blue-400"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs font-semibold tracking-wider uppercase text-blue-300">Universidad ECCI &bull; Investigación Mecatrónica</span>
+                        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">Portal de Verificación Turística</h1>
+                        <p class="text-xs sm:text-sm text-slate-300">Evaluación Inteligente de Riesgo de Fraude (Cartagena y Santa Marta)</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 text-xs bg-slate-800/80 px-3 py-2 rounded-lg border border-slate-700 w-fit">
+                    <i data-lucide="database" class="w-4 h-4 text-emerald-400"></i>
+                    <span class="text-slate-300">Fuentes Integradas: <strong class="text-white">SIC &bull; RNT &bull; DIJIN</strong></span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+        
+        <!-- Perfiles de Prueba Rápida -->
+        <section class="mb-8">
+            <div class="flex items-center justify-between mb-3">
+                <h2 class="text-sm font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-2">
+                    <i data-lucide="zap" class="w-4 h-4 text-amber-500"></i>
+                    Cargar Perfiles de Prueba Rápidos
+                </h2>
+                <span class="text-xs text-slate-400">Haz clic para autocompletar</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <button onclick="cargarPerfil('formal')" class="flex items-center justify-between p-3 bg-white rounded-xl border border-slate-200 hover:border-emerald-500 hover:shadow-md transition-all text-left group">
+                    <div>
+                        <div class="font-medium text-slate-800 group-hover:text-emerald-600 text-sm">Agencia Formal Cartagena</div>
+                        <div class="text-xs text-slate-500">NIT/RNT Válido &bull; Punto Físico</div>
+                    </div>
+                    <span class="px-2 py-1 text-xs bg-emerald-50 text-emerald-700 rounded-md font-medium border border-emerald-200">Riesgo Bajo</span>
+                </button>
+
+                <button onclick="cargarPerfil('informal')" class="flex items-center justify-between p-3 bg-white rounded-xl border border-slate-200 hover:border-rose-500 hover:shadow-md transition-all text-left group">
+                    <div>
+                        <div class="font-medium text-slate-800 group-hover:text-rose-600 text-sm">Operador Informal Santa Marta</div>
+                        <div class="text-xs text-slate-500">Sin RNT &bull; Redes Sociales</div>
+                    </div>
+                    <span class="px-2 py-1 text-xs bg-rose-50 text-rose-700 rounded-md font-medium border border-rose-200">Riesgo Alto</span>
+                </button>
+
+                <button onclick="cargarPerfil('sospechoso')" class="flex items-center justify-between p-3 bg-white rounded-xl border border-slate-200 hover:border-amber-500 hover:shadow-md transition-all text-left group">
+                    <div>
+                        <div class="font-medium text-slate-800 group-hover:text-amber-600 text-sm">Agencia en Verificación</div>
+                        <div class="text-xs text-slate-500">Con RNT &bull; Quejas en SIC</div>
+                    </div>
+                    <span class="px-2 py-1 text-xs bg-amber-50 text-amber-700 rounded-md font-medium border border-amber-200">Riesgo Medio</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Grid de Formulario y Resultados -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            <!-- Formulario de Consulta (Columna 5/12) -->
+            <div class="lg:col-span-5 bg-white p-6 sm:p-7 rounded-2xl border border-slate-200 shadow-sm">
+                <div class="flex items-center gap-2 mb-6 pb-4 border-b border-slate-100">
+                    <i data-lucide="search-check" class="w-5 h-5 text-blue-600"></i>
+                    <h2 class="text-lg font-bold text-slate-900">Datos del Servicio Turístico</h2>
+                </div>
+
+                <form id="riskForm" onsubmit="evaluarServicioAPI(event)" class="space-y-5">
+                    
+                    <!-- Campo NIT/RNT -->
+                    <div>
+                        <label for="nitInput" class="block text-sm font-medium text-slate-700 mb-1">
+                            NIT o Registro Nacional de Turismo (RNT) <span class="text-xs text-slate-400 font-normal">(Opcional)</span>
+                        </label>
+                        <div class="relative rounded-lg shadow-sm">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                                <i data-lucide="building-2" class="w-4 h-4"></i>
+                            </div>
+                            <input type="text" id="nitInput" placeholder="Ej: 900123456 o 800987654" 
+                                class="w-full pl-10 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all">
+                        </div>
+                        <p class="text-xs text-slate-500 mt-1">Si no conoce el NIT, deje este campo en blanco para validar por modalidad de venta.</p>
+                    </div>
+
+                    <!-- Destino Turístico -->
+                    <div>
+                        <label for="destinoSelect" class="block text-sm font-medium text-slate-700 mb-1">
+                            Destino Turístico
+                        </label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                                <i data-lucide="map-pin" class="w-4 h-4"></i>
+                            </div>
+                            <select id="destinoSelect" required
+                                class="w-full pl-10 pr-8 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all appearance-none">
+                                <option value="Cartagena">Cartagena de Indias</option>
+                                <option value="Santa Marta">Santa Marta</option>
+                            </select>
+                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-slate-400">
+                                <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Canal de Venta -->
+                    <div>
+                        <label for="canalSelect" class="block text-sm font-medium text-slate-700 mb-1">
+                            Canal de Oferta o Venta
+                        </label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                                <i data-lucide="globe" class="w-4 h-4"></i>
+                            </div>
+                            <select id="canalSelect" required
+                                class="w-full pl-10 pr-8 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all appearance-none">
+                                <option value="instagram">Instagram / Redes Sociales / WhatsApp</option>
+                                <option value="web">Página Web Oficial / Plataforma Reconocida</option>
+                                <option value="punto_fisico">Punto de Venta Físico / Establecimiento</option>
+                            </select>
+                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-slate-400">
+                                <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Época / Temporada -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">
+                            ¿La reserva es para Temporada Alta / Festivo?
+                        </label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <label class="flex items-center justify-center p-3 border border-slate-200 rounded-lg cursor-pointer bg-slate-50 hover:bg-slate-100 transition-all text-sm font-medium text-slate-700 border-checked">
+                                <input type="radio" name="temporadaRadio" value="true" class="w-4 h-4 text-blue-600 focus:ring-blue-500 mr-2" checked>
+                                Sí (Pico Vacacional)
+                            </label>
+                            <label class="flex items-center justify-center p-3 border border-slate-200 rounded-lg cursor-pointer bg-slate-50 hover:bg-slate-100 transition-all text-sm font-medium text-slate-700 border-checked">
+                                <input type="radio" name="temporadaRadio" value="false" class="w-4 h-4 text-blue-600 focus:ring-blue-500 mr-2">
+                                No (Temporada Baja)
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Botón Evaluar -->
+                    <button type="submit" id="btnSubmit"
+                        class="w-full py-3.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 group">
+                        <i data-lucide="shield-alert" class="w-5 h-5 group-hover:scale-110 transition-transform"></i>
+                        Evaluar Riesgo del Servicio
+                    </button>
+                </form>
+            </div>
+
+            <!-- Dashboard de Resultados (Columna 7/12) -->
+            <div class="lg:col-span-7 space-y-6">
+                
+                <div id="resultsCard" class="bg-white p-6 sm:p-7 rounded-2xl border border-slate-200 shadow-sm transition-all duration-300">
+                    
+                    <!-- Encabezado del Resultado -->
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-100">
+                        <div>
+                            <span class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Diagnóstico Estimado</span>
+                            <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2 mt-0.5" id="resultadoTitulo">
+                                Seleccione un servicio para verificar
+                            </h3>
+                        </div>
+                        
+                        <!-- Badge Estado Nivel de Riesgo -->
+                        <div id="badgeNivel" class="px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 w-fit bg-slate-100 text-slate-600 border border-slate-200">
+                            <span class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
+                            SIN EVALUAR
+                        </div>
+                    </div>
+
+                    <!-- Medidor / Progress Bar de Score -->
+                    <div class="my-6">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xs font-semibold text-slate-600 uppercase">Índice de Riesgo Calculado</span>
+                            <span class="text-lg font-extrabold text-slate-900" id="scoreText">0 / 100</span>
+                        </div>
+                        <div class="w-full bg-slate-100 rounded-full h-3.5 overflow-hidden p-0.5 border border-slate-200">
+                            <div id="scoreGauge" class="gauge-transition bg-slate-300 h-full rounded-full" style="width: 0%"></div>
+                        </div>
+                        <div class="flex justify-between text-[11px] text-slate-400 font-medium mt-1">
+                            <span>0 (Seguro)</span>
+                            <span>50 (Moderado)</span>
+                            <span>100 (Peligro)</span>
+                        </div>
+                    </div>
+
+                    <!-- Estado RNT en Registro Oficial -->
+                    <div class="mb-6 p-4 rounded-xl border flex items-center justify-between" id="rntStatusBox">
+                        <div class="flex items-center gap-3">
+                            <div class="p-2.5 rounded-lg bg-slate-100 text-slate-500" id="rntStatusIcon">
+                                <i data-lucide="file-question" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <div class="text-xs text-slate-500 uppercase font-semibold">Validación de Registro (RNT)</div>
+                                <div class="text-sm font-bold text-slate-800" id="rntStatusText">Esperando consulta de NIT/RNT</div>
+                            </div>
+                        </div>
+                        <span class="text-xs font-semibold px-2.5 py-1 rounded-md bg-slate-100 text-slate-600" id="rntStatusBadge">Pendiente</span>
+                    </div>
+
+                    <!-- Banderas Rojas Detectadas -->
+                    <div class="mb-6">
+                        <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3 flex items-center gap-2">
+                            <i data-lucide="flag" class="w-4 h-4 text-slate-400"></i>
+                            Señales de Alerta Detectadas (Banderas Rojas)
+                        </h4>
+                        <div id="banderasList" class="space-y-2">
+                            <div class="p-3 text-xs text-slate-400 bg-slate-50 rounded-lg border border-slate-100 italic">
+                                Diligencie el formulario o use los perfiles superiores para visualizar las alertas identificadas por la API.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recomendaciones al Consumidor -->
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3 flex items-center gap-2">
+                            <i data-lucide="lightbulb" class="w-4 h-4 text-amber-500"></i>
+                            Recomendaciones de Seguridad Preventiva
+                        </h4>
+                        <ul id="recomendacionesList" class="space-y-2">
+                            <li class="p-3 text-xs text-slate-500 bg-slate-50 rounded-lg border border-slate-100">
+                                Verifique siempre la razón social completa antes de realizar transferencias a cuentas bancarias personales.
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+
+                <!-- Tarjeta Nota Informativa Metodológica -->
+                <div class="p-4 bg-slate-100/80 rounded-xl border border-slate-200 text-xs text-slate-600 flex items-start gap-3">
+                    <i data-lucide="info" class="w-5 h-5 text-blue-600 shrink-0 mt-0.5"></i>
+                    <div>
+                        <strong class="text-slate-800">Metodología de Evaluación:</strong> Este prototipo integra los registros históricos del Registro Nacional de Turismo (RNT), el histórico de reclamos en la Superintendencia de Industria y Comercio (SIC) y el índice delictivo de la DIJIN (2020 - 2025).
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer de Créditos Académicos -->
+    <footer class="bg-slate-900 text-slate-400 text-xs py-6 border-t border-slate-800 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-2">
+                <i data-lucide="graduation-cap" class="w-4 h-4 text-blue-400"></i>
+                <span>Proyecto de Investigación &bull; <strong>Universidad ECCI</strong> (Programa Ingeniería Mecatrónica)</span>
+            </div>
+            <div class="text-slate-500">
+                Bogotá, D.C. - Colombia &bull; 2026
+            </div>
+        </div>
+    </footer>
+
+    <!-- Lógica JavaScript integrada con Fetch hacia FastAPI -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+        });
+
+        function cargarPerfil(tipo) {
+            const nitInput = document.getElementById('nitInput');
+            const destinoSelect = document.getElementById('destinoSelect');
+            const canalSelect = document.getElementById('canalSelect');
+            const temporadaRadios = document.getElementsByName('temporadaRadio');
+
+            if (tipo === 'formal') {
+                nitInput.value = '900123456';
+                destinoSelect.value = 'Cartagena';
+                canalSelect.value = 'punto_fisico';
+                temporadaRadios[0].checked = true;
+            } else if (tipo === 'informal') {
+                nitInput.value = '800987654';
+                destinoSelect.value = 'Santa Marta';
+                canalSelect.value = 'instagram';
+                temporadaRadios[0].checked = true;
+            } else if (tipo === 'sospechoso') {
+                nitInput.value = '901555444';
+                destinoSelect.value = 'Cartagena';
+                canalSelect.value = 'instagram';
+                temporadaRadios[0].checked = true;
+            }
+
+            evaluarServicioAPI(new Event('submit'));
+        }
+
+        async function evaluarServicioAPI(event) {
+            if (event) event.preventDefault();
+
+            const nit = document.getElementById('nitInput').value.trim();
+            const destino = document.getElementById('destinoSelect').value;
+            const canal = document.getElementById('canalSelect').value;
+            const temporadaAlta = document.querySelector('input[name="temporadaRadio"]:checked').value === 'true';
+
+            const payload = {
+                nit_agencia: nit !== "" ? nit : null,
+                ciudad_destino: destino,
+                canal_venta: canal,
+                temporada_alta: temporadaAlta
+            };
+
+            const btn = document.getElementById('btnSubmit');
+            btn.disabled = true;
+            btn.classList.add('opacity-75');
+
+            try {
+                const response = await fetch('/evaluar-riesgo', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errData = await response.json();
+                    alert("Error en la consulta: " + (errData.detail || "Verifique los campos."));
+                    return;
+                }
+
+                const data = await response.json();
+                renderizarResultados(data);
+            } catch (error) {
+                console.error("Error al conectar con la API:", error);
+                alert("No se pudo establecer conexión con el servidor FastAPI.");
+            } finally {
+                btn.disabled = false;
+                btn.classList.remove('opacity-75');
+            }
+        }
+
+        function renderizarResultados(data) {
+            const scorePonderado = data.score_numerico;
+            
+            document.getElementById('resultadoTitulo').textContent = data.nombre_agencia;
+            document.getElementById('scoreText').textContent = `${scorePonderado} / 100`;
+
+            const gauge = document.getElementById('scoreGauge');
+            gauge.style.width = `${scorePonderado}%`;
+
+            const badgeNivel = document.getElementById('badgeNivel');
+            if (data.nivel_riesgo === "ALTO") {
+                badgeNivel.className = "px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 w-fit bg-rose-100 text-rose-800 border border-rose-300 animate-pulse";
+                badgeNivel.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-rose-600"></span> RIESGO ALTO`;
+                gauge.className = "gauge-transition bg-rose-500 h-full rounded-full";
+            } else if (data.nivel_riesgo === "MEDIO") {
+                badgeNivel.className = "px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 w-fit bg-amber-100 text-amber-800 border border-amber-300";
+                badgeNivel.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-amber-600"></span> RIESGO MEDIO`;
+                gauge.className = "gauge-transition bg-amber-500 h-full rounded-full";
+            } else {
+                badgeNivel.className = "px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 w-fit bg-emerald-100 text-emerald-800 border border-emerald-300";
+                badgeNivel.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span> RIESGO BAJO`;
+                gauge.className = "gauge-transition bg-emerald-500 h-full rounded-full";
+            }
+
+            const rntStatusBox = document.getElementById('rntStatusBox');
+            const rntStatusIcon = document.getElementById('rntStatusIcon');
+            const rntStatusText = document.getElementById('rntStatusText');
+            const rntStatusBadge = document.getElementById('rntStatusBadge');
+
+            if (data.se_consulto_nit && data.rnt_registrado) {
+                rntStatusBox.className = "mb-6 p-4 rounded-xl border border-emerald-200 bg-emerald-50/50 flex items-center justify-between";
+                rntStatusIcon.className = "p-2.5 rounded-lg bg-emerald-100 text-emerald-700";
+                rntStatusIcon.innerHTML = `<i data-lucide="check-circle-2" class="w-5 h-5"></i>`;
+                rntStatusText.textContent = "Registro RNT Activo y Vigente";
+                rntStatusBadge.className = "text-xs font-semibold px-2.5 py-1 rounded-md bg-emerald-200 text-emerald-800";
+                rntStatusBadge.textContent = "Verificado";
+            } else if (data.se_consulto_nit && !data.rnt_registrado) {
+                rntStatusBox.className = "mb-6 p-4 rounded-xl border border-rose-200 bg-rose-50/50 flex items-center justify-between";
+                rntStatusIcon.className = "p-2.5 rounded-lg bg-rose-100 text-rose-700";
+                rntStatusIcon.innerHTML = `<i data-lucide="alert-triangle" class="w-5 h-5"></i>`;
+                rntStatusText.textContent = "Sin Registro RNT o Estado Inactivo";
+                rntStatusBadge.className = "text-xs font-semibold px-2.5 py-1 rounded-md bg-rose-200 text-rose-800";
+                rntStatusBadge.textContent = "No Encontrado / Inactivo";
+            } else {
+                rntStatusBox.className = "mb-6 p-4 rounded-xl border border-amber-200 bg-amber-50/50 flex items-center justify-between";
+                rntStatusIcon.className = "p-2.5 rounded-lg bg-amber-100 text-amber-700";
+                rntStatusIcon.innerHTML = `<i data-lucide="help-circle" class="w-5 h-5"></i>`;
+                rntStatusText.textContent = "Verificación de NIT No Realizada";
+                rntStatusBadge.className = "text-xs font-semibold px-2.5 py-1 rounded-md bg-amber-200 text-amber-800";
+                rntStatusBadge.textContent = "Sin Identificador";
+            }
+
+            const banderasList = document.getElementById('banderasList');
+            if (data.banderas_rojas && data.banderas_rojas.length > 0) {
+                banderasList.innerHTML = data.banderas_rojas.map(b => `
+                    <div class="p-3 text-xs text-rose-900 bg-rose-50/80 rounded-lg border border-rose-200 flex items-start gap-2.5">
+                        <i data-lucide="alert-circle" class="w-4 h-4 text-rose-600 shrink-0 mt-0.5"></i>
+                        <span>${b}</span>
+                    </div>
+                `).join('');
+            } else {
+                banderasList.innerHTML = `
+                    <div class="p-3 text-xs text-emerald-800 bg-emerald-50 rounded-lg border border-emerald-200 flex items-center gap-2">
+                        <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i>
+                        No se detectaron banderas rojas directas para los parámetros seleccionados.
+                    </div>
+                `;
+            }
+
+            const recomendacionesList = document.getElementById('recomendacionesList');
+            if (data.recomendaciones && data.recomendaciones.length > 0) {
+                recomendacionesList.innerHTML = data.recomendaciones.map(r => `
+                    <li class="p-3 text-xs text-slate-700 bg-slate-50 rounded-lg border border-slate-200 flex items-start gap-2.5">
+                        <i data-lucide="shield-check" class="w-4 h-4 text-blue-600 shrink-0 mt-0.5"></i>
+                        <span>${r}</span>
+                    </li>
+                `).join('');
+            }
+
+            lucide.createIcons();
+        }
+    </script>
+</body>
+</html>
